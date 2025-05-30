@@ -1,0 +1,16 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+*.backup
+*.log
+
+# Editor-specific
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
