@@ -9,4 +9,5 @@ locals {
   is_flexible_webserver_shape = contains(local.compute_flexible_shapes, var.WebserverShape)
   is_flexible_bastion_shape = contains(local.compute_flexible_shapes, var.BastionShape)
   is_flexible_lb_shape = var.lb_shape == "flexible" ? true : false
+    default_availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[0], "name", "")
 }
