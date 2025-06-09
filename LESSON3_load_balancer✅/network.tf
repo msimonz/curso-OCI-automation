@@ -81,4 +81,7 @@ resource "oci_core_subnet" "msimonzWebSubnet" {
   route_table_id    = oci_core_route_table.msimonzRouteTableViaIGW.id
   dhcp_options_id   = oci_core_dhcp_options.msimonzDhcpOptions1.id
   security_list_ids = [oci_core_security_list.msimonzSecurityList.id]
+  lifecycle {
+    prevent_destroy = false  # Para permitir la destrucción de la subnet
+  }
 }
