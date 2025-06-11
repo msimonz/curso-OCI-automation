@@ -232,7 +232,7 @@ variable "DBAdminPassword" {
 
 variable "DBName" {
   description = "Database name"
-  default     = "FOGGYDB"
+  default     = "msimonzDB"
 }
 
 variable "DBVersion" {
@@ -242,7 +242,7 @@ variable "DBVersion" {
 
 variable "DBDisplayName" {
   description = "Display name for the database"
-  default     = "FoggyDB"
+  default     = "msimonzDB"
 }
 
 variable "DBDiskRedundancy" {
@@ -252,17 +252,17 @@ variable "DBDiskRedundancy" {
 
 variable "DBSystemDisplayName" {
   description = "Display name for the database system"
-  default     = "FoggyKitchenDBSystem"
+  default     = "msimonzDBSystem"
 }
 
 variable "DBNodeDomainName" {
   description = "Domain name for the DB node"
-  default     = "FoggyKitchenN4.FoggyKitchenVCN.oraclevcn.com"
+  default     = "msimonzN4.msimonzvcn.oraclevcn.com"
 }
 
 variable "DBNodeHostName" {
   description = "Host name for the DB node"
-  default     = "foggydbnode"
+  default     = "msimonzdbnode"
 }
 
 variable "HostUserName" {

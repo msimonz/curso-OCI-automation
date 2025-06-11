@@ -1,16 +1,16 @@
 # VCN
-resource "oci_core_virtual_network" "FoggyKitchenVCN" {
+resource "oci_core_virtual_network" "msimonzvcn" {
   cidr_block     = var.VCN-CIDR
-  dns_label      = "FoggyKitchenVCN"
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
-  display_name   = "FoggyKitchenVCN"
+  dns_label      = "msimonzdns"
+  compartment_id = var.compartment_ocid
+  display_name   = "msimonzvcn"
 }
 
 # DHCP Options
-resource "oci_core_dhcp_options" "FoggyKitchenDhcpOptions1" {
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
-  vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
-  display_name   = "FoggyKitchenDHCPOptions1"
+resource "oci_core_dhcp_options" "msimonzDhcpOptions1" {
+  compartment_id = var.compartment_ocid
+  vcn_id         = oci_core_virtual_network.msimonzvcn.id
+  display_name   = "msimonzDHCPOptions1"
 
   options {
     type        = "DomainNameServer"
@@ -19,53 +19,53 @@ resource "oci_core_dhcp_options" "FoggyKitchenDhcpOptions1" {
 
   options {
     type                = "SearchDomain"
-    search_domain_names = ["foggykitchen.com"]
+    search_domain_names = ["msimonz.com"]
   }
 }
 
 # Internet Gateway
-resource "oci_core_internet_gateway" "FoggyKitchenInternetGateway" {
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
-  display_name   = "FoggyKitchenInternetGateway"
-  vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
+resource "oci_core_internet_gateway" "msimonzInternetGateway" {
+  compartment_id = var.compartment_ocid
+  display_name   = "msimonzInternetGateway"
+  vcn_id         = oci_core_virtual_network.msimonzvcn.id
 }
 
 # Route Table for IGW
-resource "oci_core_route_table" "FoggyKitchenRouteTableViaIGW" {
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
-  vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
-  display_name   = "FoggyKitchenRouteTableViaIGW"
+resource "oci_core_route_table" "msimonzRouteTableViaIGW" {
+  compartment_id = var.compartment_ocid
+  vcn_id         = oci_core_virtual_network.msimonzvcn.id
+  display_name   = "msimonzRouteTableViaIGW"
   route_rules {
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.FoggyKitchenInternetGateway.id
+    network_entity_id = oci_core_internet_gateway.msimonzInternetGateway.id
   }
 }
 
 # NAT Gateway
-resource "oci_core_nat_gateway" "FoggyKitchenNATGateway" {
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
-  display_name   = "FoggyKitchenNATGateway"
-  vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
+resource "oci_core_nat_gateway" "msimonzNATGateway" {
+  compartment_id = var.compartment_ocid
+  display_name   = "msimonzNATGateway"
+  vcn_id         = oci_core_virtual_network.msimonzvcn.id
 }
 
 # Route Table for NAT
-resource "oci_core_route_table" "FoggyKitchenRouteTableViaNAT" {
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
-  vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
-  display_name   = "FoggyKitchenRouteTableViaNAT"
+resource "oci_core_route_table" "msimonzRouteTableViaNAT" {
+  compartment_id = var.compartment_ocid
+  vcn_id         = oci_core_virtual_network.msimonzvcn.id
+  display_name   = "msimonzRouteTableViaNAT"
   route_rules {
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_nat_gateway.FoggyKitchenNATGateway.id
+    network_entity_id = oci_core_nat_gateway.msimonzNATGateway.id
   }
 }
 
 # Security List for HTTP/HTTPS/SSH access for Webservers 
-resource "oci_core_security_list" "FoggyKitchenWebserversSecurityList" {
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
-  display_name   = "FoggyKitchenWebserversSecurityList"
-  vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
+resource "oci_core_security_list" "msimonzWebserversSecurityList" {
+  compartment_id = var.compartment_ocid
+  display_name   = "msimonzWebserversSecurityList"
+  vcn_id         = oci_core_virtual_network.msimonzvcn.id
 
   egress_security_rules {
     protocol    = "6"
@@ -105,10 +105,10 @@ ingress_security_rules {
 
 
 # Security List for SQLNet for DBSystem
-resource "oci_core_security_list" "FoggyKitchenSQLNetSecurityList" {
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
-  display_name   = "FoggyKitchenSQLNetSecurityList"
-  vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
+resource "oci_core_security_list" "msimonzSQLNetSecurityList" {
+  compartment_id = var.compartment_ocid
+  display_name   = "msimonzSQLNetSecurityList"
+  vcn_id         = oci_core_virtual_network.msimonzvcn.id
 
   egress_security_rules {
     protocol    = "6"
@@ -135,10 +135,10 @@ ingress_security_rules {
 }
 
 # Security List for HTTP/HTTPS access for Load Balancer 
-resource "oci_core_security_list" "FoggyKitchenLoadBalancerSecurityList" {
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
-  display_name   = "FoggyKitchenLoadBalancerSecurityList"
-  vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
+resource "oci_core_security_list" "msimonzLoadBalancerSecurityList" {
+  compartment_id = var.compartment_ocid
+  display_name   = "msimonzLoadBalancerSecurityList"
+  vcn_id         = oci_core_virtual_network.msimonzvcn.id
 
   egress_security_rules {
     protocol    = "6"
@@ -160,10 +160,10 @@ resource "oci_core_security_list" "FoggyKitchenLoadBalancerSecurityList" {
 
 
 # Security List for SSH to Bastion
-resource "oci_core_security_list" "FoggyKitchenBastionSecurityList" {
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
-  display_name   = "FoggyKitchenBastionSecurityList"
-  vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
+resource "oci_core_security_list" "msimonzBastionSecurityList" {
+  compartment_id = var.compartment_ocid
+  display_name   = "msimonzBastionSecurityList"
+  vcn_id         = oci_core_virtual_network.msimonzvcn.id
 
   egress_security_rules {
     protocol    = "6"
@@ -184,52 +184,52 @@ resource "oci_core_security_list" "FoggyKitchenBastionSecurityList" {
 }
 
 # WebSubnet (private)
-resource "oci_core_subnet" "FoggyKitchenWebSubnet" {
+resource "oci_core_subnet" "msimonzWebSubnet" {
   cidr_block                 = var.PrivateSubnet-CIDR
-  display_name               = "FoggyKitchenWebSubnet"
-  dns_label                  = "FoggyKitchenN1"
-  compartment_id             = oci_identity_compartment.FoggyKitchenCompartment.id
-  vcn_id                     = oci_core_virtual_network.FoggyKitchenVCN.id
-  route_table_id             = oci_core_route_table.FoggyKitchenRouteTableViaNAT.id
-  dhcp_options_id            = oci_core_dhcp_options.FoggyKitchenDhcpOptions1.id
-  security_list_ids          = [oci_core_security_list.FoggyKitchenWebserversSecurityList.id]
+  display_name               = "msimonzWebSubnet"
+  dns_label                  = "msimonzN1"
+  compartment_id             = var.compartment_ocid
+  vcn_id                     = oci_core_virtual_network.msimonzvcn.id
+  route_table_id             = oci_core_route_table.msimonzRouteTableViaNAT.id
+  dhcp_options_id            = oci_core_dhcp_options.msimonzDhcpOptions1.id
+  security_list_ids          = [oci_core_security_list.msimonzWebserversSecurityList.id]
   prohibit_public_ip_on_vnic = true
 }
 
 # LoadBalancer Subnet (public)
-resource "oci_core_subnet" "FoggyKitchenLBSubnet" {
+resource "oci_core_subnet" "msimonzLBSubnet" {
   cidr_block        = var.LBSubnet-CIDR
-  display_name      = "FoggyKitchenLBSubnet"
-  dns_label         = "FoggyKitchenN2"
-  compartment_id    = oci_identity_compartment.FoggyKitchenCompartment.id
-  vcn_id            = oci_core_virtual_network.FoggyKitchenVCN.id
-  route_table_id    = oci_core_route_table.FoggyKitchenRouteTableViaIGW.id
-  dhcp_options_id   = oci_core_dhcp_options.FoggyKitchenDhcpOptions1.id
-  security_list_ids = [oci_core_security_list.FoggyKitchenLoadBalancerSecurityList.id]
+  display_name      = "msimonzLBSubnet"
+  dns_label         = "msimonzN2"
+  compartment_id    = var.compartment_ocid
+  vcn_id            = oci_core_virtual_network.msimonzvcn.id
+  route_table_id    = oci_core_route_table.msimonzRouteTableViaIGW.id
+  dhcp_options_id   = oci_core_dhcp_options.msimonzDhcpOptions1.id
+  security_list_ids = [oci_core_security_list.msimonzLoadBalancerSecurityList.id]
 }
 
 # Bastion Subnet (public)
-resource "oci_core_subnet" "FoggyKitchenBastionSubnet" {
+resource "oci_core_subnet" "msimonzBastionSubnet" {
   cidr_block        = var.BastionSubnet-CIDR
-  display_name      = "FoggyKitchenBastionSubnet"
-  dns_label         = "FoggyKitchenN3"
-  compartment_id    = oci_identity_compartment.FoggyKitchenCompartment.id
-  vcn_id            = oci_core_virtual_network.FoggyKitchenVCN.id
-  route_table_id    = oci_core_route_table.FoggyKitchenRouteTableViaIGW.id
-  dhcp_options_id   = oci_core_dhcp_options.FoggyKitchenDhcpOptions1.id
-  security_list_ids = [oci_core_security_list.FoggyKitchenBastionSecurityList.id]
+  display_name      = "msimonzBastionSubnet"
+  dns_label         = "msimonzN3"
+  compartment_id    = var.compartment_ocid
+  vcn_id            = oci_core_virtual_network.msimonzvcn.id
+  route_table_id    = oci_core_route_table.msimonzRouteTableViaIGW.id
+  dhcp_options_id   = oci_core_dhcp_options.msimonzDhcpOptions1.id
+  security_list_ids = [oci_core_security_list.msimonzBastionSecurityList.id]
 }
 
 # DBSystem Subnet (private)
-resource "oci_core_subnet" "FoggyKitchenDBSubnet" {
+resource "oci_core_subnet" "msimonzDBSubnet" {
   cidr_block                 = var.DBSystemSubnet-CIDR
-  display_name               = "FoggyKitchenDBSubnet"
-  dns_label                  = "FoggyKitchenN4"
-  compartment_id             = oci_identity_compartment.FoggyKitchenCompartment.id
-  vcn_id                     = oci_core_virtual_network.FoggyKitchenVCN.id
-  route_table_id             = oci_core_route_table.FoggyKitchenRouteTableViaNAT.id
-  dhcp_options_id            = oci_core_dhcp_options.FoggyKitchenDhcpOptions1.id
-  security_list_ids          = [oci_core_security_list.FoggyKitchenSQLNetSecurityList.id]
+  display_name               = "msimonzDBSubnet"
+  dns_label                  = "msimonzN4"
+  compartment_id             = var.compartment_ocid
+  vcn_id                     = oci_core_virtual_network.msimonzvcn.id
+  route_table_id             = oci_core_route_table.msimonzRouteTableViaNAT.id
+  dhcp_options_id            = oci_core_dhcp_options.msimonzDhcpOptions1.id
+  security_list_ids          = [oci_core_security_list.msimonzSQLNetSecurityList.id]
   prohibit_public_ip_on_vnic = true
 }
 

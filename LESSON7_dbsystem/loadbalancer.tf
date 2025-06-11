@@ -1,5 +1,5 @@
 # Public Load Balancer
-resource "oci_load_balancer" "FoggyKitchenLoadBalancer" {
+resource "oci_load_balancer" "msimonzLoadBalancer" {
   shape = var.lb_shape
 
   dynamic "shape_details" {
@@ -10,26 +10,26 @@ resource "oci_load_balancer" "FoggyKitchenLoadBalancer" {
     }
   }
 
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
+  compartment_id = var.compartment_ocid
   subnet_ids = [
-    oci_core_subnet.FoggyKitchenLBSubnet.id
+    oci_core_subnet.msimonzLBSubnet.id
   ]
-  display_name = "FoggyKitchenPublicLoadBalancer"
+  display_name = "msimonzPublicLoadBalancer"
 }
 
 # LoadBalancer Listener
-resource "oci_load_balancer_listener" "FoggyKitchenLoadBalancerListener" {
-  load_balancer_id         = oci_load_balancer.FoggyKitchenLoadBalancer.id
-  name                     = "FoggyKitchenLoadBalancerListener"
-  default_backend_set_name = oci_load_balancer_backendset.FoggyKitchenLoadBalancerBackendset.name
+resource "oci_load_balancer_listener" "msimonzLoadBalancerListener" {
+  load_balancer_id         = oci_load_balancer.msimonzLoadBalancer.id
+  name                     = "msimonzLoadBalancerListener"
+  default_backend_set_name = oci_load_balancer_backendset.msimonzLoadBalancerBackendset.name
   port                     = 80
   protocol                 = "HTTP"
 }
 
 # LoadBalancer Backendset
-resource "oci_load_balancer_backendset" "FoggyKitchenLoadBalancerBackendset" {
-  name             = "FoggyKitchenLBBackendset"
-  load_balancer_id = oci_load_balancer.FoggyKitchenLoadBalancer.id
+resource "oci_load_balancer_backendset" "msimonzLoadBalancerBackendset" {
+  name             = "msimonzLBBackendset"
+  load_balancer_id = oci_load_balancer.msimonzLoadBalancer.id
   policy           = "ROUND_ROBIN"
 
   health_checker {
@@ -41,11 +41,11 @@ resource "oci_load_balancer_backendset" "FoggyKitchenLoadBalancerBackendset" {
 }
 
 # LoadBalanacer Backend for WebServer1 Instance
-resource "oci_load_balancer_backend" "FoggyKitchenLoadBalancerBackend" {
+resource "oci_load_balancer_backend" "msimonzLoadBalancerBackend" {
   count            = var.ComputeCount
-  load_balancer_id = oci_load_balancer.FoggyKitchenLoadBalancer.id
-  backendset_name  = oci_load_balancer_backendset.FoggyKitchenLoadBalancerBackendset.name
-  ip_address       = oci_core_instance.FoggyKitchenWebserver[count.index].private_ip
+  load_balancer_id = oci_load_balancer.msimonzLoadBalancer.id
+  backendset_name  = oci_load_balancer_backendset.msimonzLoadBalancerBackendset.name
+  ip_address       = oci_core_instance.msimonzWebserver[count.index].private_ip
   port             = 80
   backup           = false
   drain            = false

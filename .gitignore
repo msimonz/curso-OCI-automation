@@ -6,7 +6,8 @@
 crash.log
 *.backup
 *.log
-
+*.tfvars
+id_rsa
 # Editor-specific
 .vscode/
 .idea/

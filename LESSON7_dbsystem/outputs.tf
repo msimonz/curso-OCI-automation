@@ -1,13 +1,13 @@
 # Bastion Instance Public IP
-output "FoggyKitchenBastionServer_PublicIP" {
-  value = [data.oci_core_vnic.FoggyKitchenBastionServer_VNIC1.public_ip_address]
+output "msimonzBastionServer_PublicIP" {
+  value = [data.oci_core_vnic.msimonzBastionServer_VNIC1.public_ip_address]
 }
 
 # WebServer Instances Private IPs
-output "FoggyKitchenWebserver_Private_IPs_Formatted" {
+output "msimonzWebserver_Private_IPs_Formatted" {
   value = {
-    for i, ip in data.oci_core_vnic.FoggyKitchenWebserver_VNIC1[*].private_ip_address :
-    oci_core_instance.FoggyKitchenWebserver[i].display_name => ip
+    for i, ip in data.oci_core_vnic.msimonzWebserver_VNIC1[*].private_ip_address :
+    oci_core_instance.msimonzWebserver[i].display_name => ip
   }
 }
 
@@ -18,11 +18,11 @@ output "generated_ssh_private_key" {
 }
 
 # Load Balancer First Public IP
-output "FoggyKitchenLoadBalancer_Public_IP" {
-  value = oci_load_balancer.FoggyKitchenLoadBalancer.ip_address_details[0].ip_address
+output "msimonzLoadBalancer_Public_IP" {
+  value = oci_load_balancer.msimonzLoadBalancer.ip_address_details[0].ip_address
 }
 
 # DBServer Private IP
-output "FoggyKitchenDBServer_PrivateIP" {
-  value = [data.oci_core_vnic.FoggyKitchenDBSystem_VNIC1.private_ip_address]
+output "msimonzDBServer_PrivateIP" {
+  value = [data.oci_core_vnic.msimonzDBSystem_VNIC1.private_ip_address]
 }

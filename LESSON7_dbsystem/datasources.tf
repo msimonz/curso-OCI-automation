@@ -42,35 +42,35 @@ data "oci_core_images" "BastionImage" {
 }
 
 # Bastion Compute VNIC Attachment DataSource
-data "oci_core_vnic_attachments" "FoggyKitchenBastionServer_VNIC1_attach" {
-  availability_domain = var.availability_domain_name == "" ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[0], "name") : var.availability_domain_name
-  compartment_id      = oci_identity_compartment.FoggyKitchenCompartment.id
-  instance_id         = oci_core_instance.FoggyKitchenBastionServer.id
+data "oci_core_vnic_attachments" "msimonzBastionServer_VNIC1_attach" {
+  availability_domain = var.availability_domain_name == "" ? local.default_availability_domain : var.availability_domain_name
+  compartment_id      = var.compartment_ocid
+  instance_id         = oci_core_instance.msimonzBastionServer.id
 }
 
 # Bastion Compute VNIC DataSource
-data "oci_core_vnic" "FoggyKitchenBastionServer_VNIC1" {
-  vnic_id = data.oci_core_vnic_attachments.FoggyKitchenBastionServer_VNIC1_attach.vnic_attachments.0.vnic_id
+data "oci_core_vnic" "msimonzBastionServer_VNIC1" {
+  vnic_id = data.oci_core_vnic_attachments.msimonzBastionServer_VNIC1_attach.vnic_attachments.0.vnic_id
 }
 
 # WebServers Compute VNIC Attachment DataSource
-data "oci_core_vnic_attachments" "FoggyKitchenWebserver_VNIC1_attach" {
+data "oci_core_vnic_attachments" "msimonzWebserver_VNIC1_attach" {
   count               = var.ComputeCount
-  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index % length(data.oci_identity_availability_domains.ADs.availability_domains)], "name") 
-  compartment_id      = oci_identity_compartment.FoggyKitchenCompartment.id
-  instance_id         = oci_core_instance.FoggyKitchenWebserver[count.index].id
+  availability_domain = var.availability_domain_name == "" ? local.default_availability_domain : var.availability_domain_name
+  compartment_id      = var.compartment_ocid
+  instance_id         = oci_core_instance.msimonzWebserver[count.index].id
 }
 
 # WebServers Compute VNIC DataSource
-data "oci_core_vnic" "FoggyKitchenWebserver_VNIC1" {
+data "oci_core_vnic" "msimonzWebserver_VNIC1" {
   count   = var.ComputeCount
-  vnic_id = data.oci_core_vnic_attachments.FoggyKitchenWebserver_VNIC1_attach[count.index].vnic_attachments.0.vnic_id
+  vnic_id = data.oci_core_vnic_attachments.msimonzWebserver_VNIC1_attach[count.index].vnic_attachments.0.vnic_id
 }
 
 # DBNodes DataSource
 data "oci_database_db_nodes" "DBNodeList" {
-  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
-  db_system_id   = oci_database_db_system.FoggyKitchenDBSystem.id
+  compartment_id = var.compartment_ocid
+  db_system_id   = oci_database_db_system.msimonzDBSystem.id
 }
 
 # DBNodes Details DataSource
@@ -79,6 +79,6 @@ data "oci_database_db_node" "DBNodeDetails" {
 }
 
 # DBNodes Details VNIC DataSource
-data "oci_core_vnic" "FoggyKitchenDBSystem_VNIC1" {
+data "oci_core_vnic" "msimonzDBSystem_VNIC1" {
   vnic_id = data.oci_database_db_node.DBNodeDetails.vnic_id
 }

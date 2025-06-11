@@ -1,10 +1,10 @@
 # WebServer Compute
 
-resource "oci_core_instance" "FoggyKitchenWebserver" {
+resource "oci_core_instance" "msimonzWebserver" {
   count               = var.ComputeCount
-  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index % length(data.oci_identity_availability_domains.ADs.availability_domains)], "name") 
-  compartment_id      = oci_identity_compartment.FoggyKitchenCompartment.id
-  display_name        = "FoggyKitchenWebServer${count.index + 1}"
+  availability_domain = var.availability_domain_name == "" ? local.default_availability_domain : var.availability_domain_name
+  compartment_id      = var.compartment_ocid
+  display_name        = "msimonzWebServer${count.index + 1}"
   fault_domain        = "FAULT-DOMAIN-${(count.index % 3)+ 1}"
   shape               = var.WebserverShape
   dynamic "shape_config" {
@@ -23,7 +23,7 @@ resource "oci_core_instance" "FoggyKitchenWebserver" {
     ssh_authorized_keys = tls_private_key.public_private_key_pair.public_key_openssh
   }
   create_vnic_details {
-    subnet_id        = oci_core_subnet.FoggyKitchenWebSubnet.id
+    subnet_id        = oci_core_subnet.msimonzWebSubnet.id
     assign_public_ip = false
   }
 }
@@ -31,10 +31,10 @@ resource "oci_core_instance" "FoggyKitchenWebserver" {
 
 # Bastion Compute
 
-resource "oci_core_instance" "FoggyKitchenBastionServer" {
-  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[0], "name")
-  compartment_id      = oci_identity_compartment.FoggyKitchenCompartment.id
-  display_name        = "FoggyKitchenBastionServer"
+resource "oci_core_instance" "msimonzBastionServer" {
+  availability_domain = var.availability_domain_name == "" ? local.default_availability_domain : var.availability_domain_name
+  compartment_id      = var.compartment_ocid
+  display_name        = "msimonzBastionServer"
   shape               = var.BastionShape
   dynamic "shape_config" {
     for_each = local.is_flexible_bastion_shape ? [1] : []
@@ -52,7 +52,7 @@ resource "oci_core_instance" "FoggyKitchenBastionServer" {
     ssh_authorized_keys = tls_private_key.public_private_key_pair.public_key_openssh
   }
   create_vnic_details {
-    subnet_id        = oci_core_subnet.FoggyKitchenBastionSubnet.id
+    subnet_id        = oci_core_subnet.msimonzBastionSubnet.id
     assign_public_ip = true
   }
 }

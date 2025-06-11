@@ -1,7 +1,7 @@
 # DBSystem
-resource "oci_database_db_system" "FoggyKitchenDBSystem" {
-  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[0], "name")
-  compartment_id      = oci_identity_compartment.FoggyKitchenCompartment.id
+resource "oci_database_db_system" "msimonzDBSystem" {
+  availability_domain = var.availability_domain_name == "" ? local.default_availability_domain : var.availability_domain_name
+  compartment_id      = var.compartment_ocid
   cpu_core_count      = var.CPUCoreCount
   database_edition    = var.DBEdition
   db_home {
@@ -18,7 +18,7 @@ resource "oci_database_db_system" "FoggyKitchenDBSystem" {
   }
   disk_redundancy         = var.DBDiskRedundancy
   shape                   = var.DBNodeShape
-  subnet_id               = oci_core_subnet.FoggyKitchenDBSubnet.id
+  subnet_id               = oci_core_subnet.msimonzDBSubnet.id
   ssh_public_keys         = [tls_private_key.public_private_key_pair.public_key_openssh]
   display_name            = var.DBSystemDisplayName
   domain                  = var.DBNodeDomainName
