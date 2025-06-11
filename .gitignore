@@ -10,7 +10,7 @@ id_rsa
 # Editor-specific
 .vscode/
 .idea/
-
+*.tfvars
 # OS files
 .DS_Store
 Thumbs.db
